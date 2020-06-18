@@ -1,0 +1,69 @@
+#PBS -S /bin/bash
+
+### RESOURCE REQUEST ###
+#PBS -l nodes=1:ppn=64
+
+
+#PBS -l walltime=1:00:00
+#PBS -q default
+
+### METADATA ###
+#PBS -N makehtml
+#PBS -A ECON
+#PBS -j oe
+
+### EMAIL NOTIFICATION OPTIONS ###
+#PBS -m abe
+#PBS -M bhandari@umn.edu
+
+### SETUP THE JOB ###
+# Change Working Directory
+cd $PBS_O_WORKDIR
+echo "Current working directory: $PBS_O_WORKDIR"
+
+### Load modulefiles (NOTE: modulefiles in a non-interactive shell are not always supported on other clusters. You would want to load your environment prior to submitting your script)
+
+
+module load python/anaconda
+source activate /cluster/shared/bhandari/codes/.venv
+export MKL_NUM_THREADS=1
+
+
+### SEND PREAMBLE TO STDOUT
+echo "This job was submitted by user:  $PBS_O_LOGNAME"
+echo "This job was submitted to host:  $PBS_O_HOST"
+echo "This job was submitted to queue: $PBS_O_QUEUE"
+echo "PBS working directory: $PBS_O_WORKDIR"
+echo "PBS job id: $PBS_JOBID"
+echo "PBS job name: $PBS_JOBNAME"
+echo "PBS environment: $PBS_ENVIRONMENT"
+echo " "
+echo "This script is running on compute node `hostname` "
+echo "The MPI nodes are:"
+if [ -e "${PBS_NODEFILE}" ] ; then
+    uniq -c "$PBS_NODEFILE"
+fi
+
+echo $PATH		
+echo
+echo "Job started on: " `date`
+
+### export OMPI_MCA_mpi_warn_on_fork=0
+
+cd /home/bhandari/sweat_equity_revision/sceconomy_lifecycle/
+
+### EXECUTE JOB TASKS
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_taubonly.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_taunonly.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_taubtaup.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_ss_taubonly.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_ss_taunonly.ipynb
+jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_chi_taubonly.ipynb
+jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_chi_taunonly.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_compliance_taubonly.ipynb
+#jupyter nbconvert --execute --to html --ExecutePreprocessor.timeout=500 final_results_compliance_taunonly.ipynb
+
+
+
+### CLEAN UP
+echo "Job finished on: " `date`
