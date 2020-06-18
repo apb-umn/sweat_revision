@@ -80,6 +80,7 @@ class Economy:
                  A = None,
                  upsilon = None,
                  varpi = None,
+                 ave_biz_tax_rate = None,
                  
                  path_to_data_i_s = None,
                  path_to_data_is_o = None,
@@ -150,7 +151,8 @@ class Economy:
         if num_total_pop is not None: self.num_total_pop = num_total_pop
         if A is not None: self.A = A
         if upsilon is not None: self.upsilon = upsilon
-        if varpi is not None: self.varpi = varpi        
+        if varpi is not None: self.varpi = varpi
+        if ave_biz_tax_rate is not None: self.ave_biz_tax_rate = ave_biz_tax_rate
 
         if path_to_data_i_s is not None: self.path_to_data_i_s = path_to_data_i_s
         if path_to_data_is_o is not None: self.path_to_data_is_o = path_to_data_is_o
@@ -218,6 +220,7 @@ class Economy:
         self.A        = 1.577707121233179 #this should give yc = 1 (approx.) z^2 case
         self.upsilon  = 0.5
         self.varpi    = 0.5
+        self.ave_biz_tax_rate = 0.236
 
         # self.path_to_data_i_s = './input_data/data_i_s.npy'
         self.path_to_data_i_s = './tmp/data_i_s'
@@ -4385,9 +4388,6 @@ class Economy:
 
             ###end obtain dividends and the stochastic discount factor###
 
-
-        _pre_calc_(d, dc_u, dc_up, data_an, data_kapn0, be_s)                                                                            
-
         
         @nb.jit(nopython = True, parallel = True)
         def _inner_get_sweat_equity_value_pp_(_val_,#output
@@ -4481,25 +4481,39 @@ class Economy:
 
             ###end debug code###                
                 
-                
-
+        # prepare time
+        _pre_calc_(d, dc_u, dc_up, data_an, data_kapn0, be_s)                                                                            
         
-        #main loop to calculate values
+        # main loop to calculate values
         val_dyna_sdf = d / (rbar - grate) #initial value
         _inner_get_sweat_equity_value_pp_(val_dyna_sdf, d, data_an, data_kapn0, dc_u, dc_up, be_s, True)
 
         val_dyna_fix = d / (rbar - grate) #initial value
         _inner_get_sweat_equity_value_pp_(val_dyna_fix, d, data_an, data_kapn0, dc_u, dc_up, be_s, True, (1. + grate)/(1. + rs))
         
-
         # val_life = d / (rbar - grate)
-        # _inner_get_sweat_equity_value_pp_(val_life, d, data_an, data_kapn0, dc_u, dc_up, be_s, False)        
+        # _inner_get_sweat_equity_value_pp_(val_life, d, data_an, data_kapn0, dc_u, dc_up, be_s, False)
+
+
+        d_quasi_taxed = (1. - self.ave_biz_tax_rate) * np.fmax(d, 0.) + np.fmin(d, 0.)
+
+        # main loop to calculate values
+        val_dyna_sdf_quasi_taxed = d_quasi_taxed / (rbar - grate) #initial value
+        _inner_get_sweat_equity_value_pp_(val_dyna_sdf_quasi_taxed, d_quasi_taxed, data_an, data_kapn0, dc_u, dc_up, be_s, True)
+
+        val_dyna_fix_quasi_taxed = d_quasi_taxed / (rbar - grate) #initial value
+        _inner_get_sweat_equity_value_pp_(val_dyna_fix_quasi_taxed, d_quasi_taxed, data_an, data_kapn0, dc_u, dc_up, be_s, True, (1. + grate)/(1. + rs))
+        
 
 
         self.sweat_div = d
+        self.sweat_div_quasi_taxed = d_quasi_taxed
         self.sweat_val_dyna_sdf = val_dyna_sdf
         self.sweat_val_dyna_fix = val_dyna_fix        
+        self.sweat_val_dyna_sdf_quasi_taxed  = val_dyna_sdf_quasi_taxed
+        self.sweat_val_dyna_fix_quasi_taxed  = val_dyna_fix_quasi_taxed
 
+        
     def simulate_other_vars(self):
 
         for variable in self.__dict__ : exec(variable+'= self.'+variable, locals(), globals())
@@ -4647,15 +4661,34 @@ class Economy:
         data_val_sweat_dyna_sdf = np.zeros(data_a.shape)
         data_val_sweat_dyna_fix = np.zeros(data_a.shape)        
 
+        data_div_sweat_quasi_taxed = np.zeros(data_a.shape)        
+        data_val_sweat_dyna_sdf_quasi_taxed = np.zeros(data_a.shape)
+        data_val_sweat_dyna_fix_quasi_taxed = np.zeros(data_a.shape)        
+
         if hasattr(self, 'sweat_div'):
             calc_val_seq(data_div_sweat, data_a, data_kap,  data_i_s, data_is_o, self.sweat_div)
             self.data_div_sweat = data_div_sweat
+            
         if hasattr(self, 'sweat_val_dyna_sdf'):            
             calc_val_seq(data_val_sweat_dyna_sdf, data_a, data_kap,  data_i_s, data_is_o, self.sweat_val_dyna_sdf)
             self.data_val_sweat_dyna_sdf = data_val_sweat_dyna_sdf
+            
         if hasattr(self, 'sweat_val_dyna_fix'):            
             calc_val_seq(data_val_sweat_dyna_fix, data_a, data_kap,  data_i_s, data_is_o, self.sweat_val_dyna_fix)        
-            self.data_val_sweat_dyna_fix = data_val_sweat_dyna_fix        
+            self.data_val_sweat_dyna_fix = data_val_sweat_dyna_fix
+
+        if hasattr(self, 'sweat_div_quasi_taxed'):
+            calc_val_seq(data_div_sweat_quasi_taxed, data_a, data_kap,  data_i_s, data_is_o, self.sweat_div_quasi_taxed)
+            self.data_div_sweat_quasi_taxed = data_div_sweat_quasi_taxed
+            
+        if hasattr(self, 'sweat_val_dyna_sdf_quasi_taxed'):            
+            calc_val_seq(data_val_sweat_dyna_sdf_quasi_taxed, data_a, data_kap,  data_i_s, data_is_o, self.sweat_val_dyna_sdf_quasi_taxed)
+            self.data_val_sweat_dyna_sdf_quasi_taxed = data_val_sweat_dyna_sdf_quasi_taxed
+            
+        if hasattr(self, 'sweat_val_dyna_fix_quasi_taxed'):            
+            calc_val_seq(data_val_sweat_dyna_fix_quasi_taxed, data_a, data_kap,  data_i_s, data_is_o, self.sweat_val_dyna_fix_quasi_taxed)        
+            self.data_val_sweat_dyna_fix_quasi_taxed = data_val_sweat_dyna_fix_quasi_taxed
+            
 
         self.data_u = data_u
         self.data_cc = data_cc
@@ -4825,6 +4858,9 @@ class Economy:
             np.savetxt(dir_path_save + 'data_val_sweat_dyna_sdf.csv', self.data_val_sweat_dyna_sdf[:, -100:])
             np.savetxt(dir_path_save + 'data_val_sweat_dyna_fix.csv', self.data_val_sweat_dyna_fix[:, -100:])            
 
+            np.savetxt(dir_path_save + 'data_div_sweat_quasi_taxed.csv', self.data_div_sweat_quasi_taxed[:, -100:])
+            np.savetxt(dir_path_save + 'data_val_sweat_dyna_sdf_quasi_taxed.csv', self.data_val_sweat_dyna_sdf_quasi_taxed[:, -100:])
+            np.savetxt(dir_path_save + 'data_val_sweat_dyna_fix_quasi_taxed.csv', self.data_val_sweat_dyna_fix_quasi_taxed[:, -100:])            
 
             np.savetxt(dir_path_save + 'sind_age.csv', self.sind_age)
             np.savetxt(dir_path_save + 'cind_age.csv', self.cind_age)

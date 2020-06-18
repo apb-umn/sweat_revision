@@ -188,6 +188,9 @@ psin_fixed = 0.06 # value for the fixed intercept
 nbracket_fixed = 4 # index for the fixed intercept
 psin = get_consistent_phi(nbracket, taun, psin_fixed, nbracket_fixed) # obtain consistent intercepts
 
+# average business tax rate to compute after-tax Vb
+ave_biz_tax_rate = 0.236
+
 
 
 # computational parameters
