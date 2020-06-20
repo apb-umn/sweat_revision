@@ -46,10 +46,6 @@ nd_log_file = './log' + case_name+ '/log.txt'
 detailed_output_file = './log'+ case_name+'/detail.txt'
 
 
-### import parameters @@@
-#from parameters import *
-
-
 ### initial prices and parameters
 
 p_init = p 
@@ -173,7 +169,7 @@ def target(prices):
     # mom2 = comm.bcast(mom2) # 1. - (tax_rev - tran - netb)/g
     # mom3 = comm.bcast(mom3) # 0.0
     # mom4 = comm.bcast(mom4) # Ens/En
-    # mom5 = comm.bcast(mom5) # (p*Eys - (rs+delk)*Eks - w*Ens)/GDP
+    # mom5 = comm.bcast(mom5) # (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP
     # mom6 = comm.bcast(mom6) # nc
     # mom7 = comm.bcast(mom7) # 1. - EIc
     # mom8 = comm.bcast(mom8) # xc/GDP        

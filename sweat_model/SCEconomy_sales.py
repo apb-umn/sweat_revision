@@ -3626,7 +3626,7 @@ class Economy:
             netb = (rbar - grate)*b
             tax_rev = Tc + ETn + ETm + Td + Tp + E_transfer + ETcg
 
-            GDP = yc + yn + p*Eys
+            GDP = yc + yn + p*Eys - Ex
             C = Ecc + p*Ecs
             xc = (grate + delk)*kc
             Exs = (grate + delk)*Eks
@@ -3693,7 +3693,7 @@ class Economy:
             print('  Govt. debt(b) = {}'.format(b))
             print('  S-Corp Rental Capital (ks) =  {}'.format(Eks))
             print('  Ratio of C-corp workers(EIc) = {}'.format(EIc))
-            print('  GDP(yc + yn + p*Eys) = {}'.format(GDP))
+            print('  GDP(yc + yn + p*Eys - Ex) = {}'.format(GDP))
 
             print('')
             print('C-corporation production:')
@@ -3719,8 +3719,8 @@ class Economy:
             print('National Income Shares (./GDP):')
             print('  C-wages (w*nc) = {}'.format((w*nc)/GDP))
             print('  Rents(rc*kc + rs*Eks) = {}'.format((rc*kc + rs*Eks)/GDP))
-            print('  Sweat(p*Eys - (rs+delk)*Eks)) = {}'.format((p*Eys - (rs+delk)*Eks)/GDP))
-            print('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens)) = {}'.format((p*Eys - (rs+delk)*Eks - w*Ens)/GDP))
+            print('  Sweat(p*Eys - (rs+delk)*Eks - Ex)) = {}'.format((p*Eys - (rs+delk)*Eks - Ex)/GDP))
+            print('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens - Ex)) = {}'.format((p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP))
             print('      S-wage(w*Ens)) = {}'.format((w*Ens)/GDP))                        
             print('  Deprec.(delk*(kc+Eks)) = {}'.format((delk*(kc+Eks))/GDP))
             print('  NonBusiness income(yn) = {}'.format(yn/GDP))
@@ -3897,18 +3897,18 @@ class Economy:
             
             mom3 = 0.0
             mom4 = Ens/En
-            mom5 = (p*Eys - (rs+delk)*Eks - w*Ens)/GDP
+            mom5 = (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP
             mom6 = nc
             mom7 = 1. - EIc
-            mom8 = 1. - pkap_implied/pkap #ER/np.mean(is_s_acq) #(ER - pkap*np.mean(is_s_acq))/yc
-            mom9 = xc/GDP# 1. - kapbar_implied/kapbar                          
+            mom8 = 1. - pkap_implied/pkap # ER/np.mean(is_s_acq) #(ER - pkap*np.mean(is_s_acq))/yc
+            mom9 = xc/GDP                 # 1. - kapbar_implied/kapbar                          
             
-        mom0 = comm.bcast(mom0) #1. - Ecs/Eys
+        mom0 = comm.bcast(mom0) # 1. - Ecs/Eys
         mom1 = comm.bcast(mom1) # 1. - (Ecc  + Ex+ (grate + delk)*(kc + Eks) + g + xnb - yn)/yc
         mom2 = comm.bcast(mom2) # 1. - (tax_rev - tran - netb)/g
         mom3 = comm.bcast(mom3) # 0.0
         mom4 = comm.bcast(mom4) # Ens/En
-        mom5 = comm.bcast(mom5) # (p*Eys - (rs+delk)*Eks - w*Ens)/GDP
+        mom5 = comm.bcast(mom5) # (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP
         mom6 = comm.bcast(mom6) # nc
         mom7 = comm.bcast(mom7) # 1. - EIc
         mom8 = comm.bcast(mom8) # 1. - pkap_implied/pkap
@@ -4045,7 +4045,7 @@ class Economy:
             netb = (rbar - grate)*b
             tax_rev = Tc + ETn + ETm + Td + Tp + E_transfer + ETcg
 
-            GDP = yc + yn + p*Eys
+            GDP = yc + yn + p*Eys - Ex
             C = Ecc + p*Ecs
             xc = (grate + delk)*kc
             Exs = (grate + delk)*Eks
@@ -4100,7 +4100,7 @@ class Economy:
             f.write('\n')            
             f.write('  Ratio of C-corp workers(EIc)  ,' + str(EIc))
             f.write('\n')            
-            f.write('  GDP(yc + yn + p*Eys)  ,' + str(GDP))
+            f.write('  GDP(yc + yn + p*Eys - Ex)  ,' + str(GDP))
             f.write('\n')            
 
             # f.write('')
@@ -4143,9 +4143,9 @@ class Economy:
             f.write('\n')            
             f.write('  Rents(rc*kc + rs*Eks)  ,' + str((rc*kc + rs*Eks)/GDP))
             f.write('\n')            
-            f.write('  Sweat(p*Eys - (rs+delk)*Eks))  ,' + str((p*Eys - (rs+delk)*Eks)/GDP))
+            f.write('  Sweat(p*Eys - (rs+delk)*Eks - Ex))  ,' + str((p*Eys - (rs+delk)*Eks - Ex)/GDP))
             f.write('\n')            
-            f.write('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens))  ,' + str((p*Eys - (rs+delk)*Eks - w*Ens)/GDP))
+            f.write('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens - Ex))  ,' + str((p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP))
             f.write('\n')            
             f.write('      S-wage(w*Ens))  ,' + str((w*Ens)/GDP))
             f.write('\n')            

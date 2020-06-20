@@ -3543,8 +3543,8 @@ class Economy:
             print('National Income Shares (./GDP):')
             print('  C-wages (w*nc) = {}'.format((w*nc)/GDP))
             print('  Rents(rc*kc + rs*Eks) = {}'.format((rc*kc + rs*Eks)/GDP))
-            print('  Sweat(p*Eys - (rs+delk)*Eks)) = {}'.format((p*Eys - (rs+delk)*Eks)/GDP))
-            print('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens)) = {}'.format((p*Eys - (rs+delk)*Eks - w*Ens)/GDP))
+            print('  Sweat(p*Eys - (rs+delk)*Eks; - Ex)) = {}'.format((p*Eys - (rs+delk)*Eks - Ex)/GDP))
+            print('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens - Ex)) = {}'.format((p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP))
             print('      S-wage(w*Ens)) = {}'.format((w*Ens)/GDP))                        
             print('  Deprec.(delk*(kc+Eks)) = {}'.format((delk*(kc+Eks))/GDP))
             print('  NonBusiness income(yn) = {}'.format(yn/GDP))
@@ -3688,7 +3688,7 @@ class Economy:
 
             mom3 = 0.0
             mom4 = Ens/En
-            mom5 = (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/(GDP- Ex)
+            mom5 = (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP
             mom6 = nc
             mom7 = 1. - EIc
             mom8 = xc/GDP
@@ -3995,9 +3995,9 @@ class Economy:
             f.write('\n')            
             f.write('  Rents(rc*kc + rs*Eks)  ,' + str((rc*kc + rs*Eks)/GDP))
             f.write('\n')            
-            f.write('  Sweat(p*Eys - (rs+delk)*Eks - Ex))  ,' + str((p*Eys - (rs+delk)*Eks)/GDP))
+            f.write('  Sweat(p*Eys - (rs+delk)*Eks - Ex))  ,' + str((p*Eys - (rs+delk)*Eks - Ex)/GDP))
             f.write('\n')            
-            f.write('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens - Ex))  ,' + str((p*Eys - (rs+delk)*Eks - w*Ens)/GDP))
+            f.write('      Pure Sweat(p*Eys - (rs+delk)*Eks - w*Ens - Ex))  ,' + str((p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP))
             f.write('\n')            
             f.write('      S-wage(w*Ens))  ,' + str((w*Ens)/GDP))
             f.write('\n')            

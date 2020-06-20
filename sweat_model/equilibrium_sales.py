@@ -168,7 +168,7 @@ def target(prices):
     # mom2 = 1. - (tax_rev - E_transfer - netb)/g                        
     # mom3 = 0.0
     # mom4 = Ens/En
-    # mom5 = (p*Eys - (rs+delk)*Eks - w*Ens)/GDP
+    # mom5 = (p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP
     # mom6 = nc
     # mom7 = 1. - EIc
     # mom8 = 1.-pkap_implied/pkap #ER/np.mean(is_s_acq) #(ER - pkap*np.mean(is_s_acq))/yc #
