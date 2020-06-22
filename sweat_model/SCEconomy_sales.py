@@ -4241,6 +4241,89 @@ class Economy:
 
             f.close()
             
+            f = open(file_path  + 'income_shares.csv', 'w')
+            f.write('moment, value')
+            f.write('\n')            
+            f.write('Business Income, ' + str(1. - yn/GDP))
+            f.write('\n')                        
+            f.write('Sweat labor income, ' + str((p*Eys - (rs+delk)*Eks - w*Ens - Ex)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat labor income, ' + str((w*nc + w*Ens)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat labor income C corporations, ' + str((w*nc)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat labor income pass through business, ' + str((w*Ens)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat capital income, ' + str((rc*kc + rs*Eks + delk*kc + delk*Eks)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat capital income rents, ' + str((rc*kc + rs*Eks)/GDP))
+            f.write('\n')                        
+            f.write('Non-sweat capital income depreciation, ' + str((delk*kc + delk*Eks)/GDP))
+            f.write('\n')                        
+            f.write('Non-business Income, ' + str(yn/GDP))
+            f.write('\n')                        
+            f.close()
+
+            
+            f = open(file_path  + 'product_shares.csv', 'w')
+            f.write('moment, value')
+            f.write('\n')            
+            f.write('Private Consumption, ' + str((Ecc + p*Ecs)/GDP))
+            f.write('\n')                        
+            f.write('Government Consumption, ' + str((g)/GDP))
+            f.write('\n')                        
+            f.write('Business Investments C corporations, ' + str((xc)/GDP))
+            f.write('\n')                        
+            f.write('Business Investments pass through business, ' + str((Exs)/GDP))
+            f.write('\n')                        
+            f.write('Non-business Investments, ' + str((xnb)/GDP))
+            f.write('\n')
+            
+            f.close()
+
+            f = open(file_path  + 'hours_use.csv', 'w')
+            f.write('moment, value')
+            f.write('\n')            
+            f.write('C corporations emp.,' + str(nc))
+            f.write('\n')                        
+            f.write('Pass Through   emp.,' + str(Ens))
+            f.write('\n')                        
+            f.write('Pass Through   owner,' + str(Ehy + Ehkap))
+            f.write('\n')                        
+            f.write('Pass Through   owner production,' + str(Ehy))
+            f.write('\n')                        
+            f.write('Pass Through   owner sweat,' + str( Ehkap))
+            f.write('\n')
+            
+            f.close()
+
+            f = open(file_path  + 'fixed_asset_div_gdp.csv', 'w')
+            f.write('moment, value')
+            f.write('\n')            
+            
+            
+            f.write('fixed asset C corporations, ' + str((kc)/GDP))
+            f.write('\n')                        
+            f.write('fixed asset pass through business, ' + str((Eks)/GDP))
+            f.write('\n')
+            
+            f.close()
+            
+
+            # if sweat equity was already calc'd
+
+            if (self.data_val_sweat_dyna_sdf is not None ) and (self.data_val_sweat_dyna_fix is not None):
+                
+                f = open(file_path  + 'sweat_equity_div_gdp.csv', 'w')
+                f.write('moment, value')
+                f.write('\n')            
+                f.write('discounted by beta_tilde, ' + str((np.mean(self.data_val_sweat_dyna_fix[:, self.sim_time - 1]))/GDP))
+                f.write('\n')                            
+                f.write('discounted by owner SDF , ' + str((np.mean(self.data_val_sweat_dyna_sdf[:, self.sim_time - 1]))/GDP))
+                f.write('\n')
+                
+                f.close()
+
                 
 
         return
