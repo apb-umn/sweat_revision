@@ -74,8 +74,7 @@ xc_share = 0.134 # target
 
 ### nelder mead option
 tol_nm = 1.0e-4 #if the NM returns a value large than it, the NM restarts
-
-
+tol_nm=tol_nm/2.0
 
 ### define objective function for market clearing and calibration ###
 dist_min = 10000000.0
@@ -262,8 +261,8 @@ if __name__ == '__main__':
 
     nm_result = None
 
-    for i in range(5): # repeat up to 5 times
-        nm_result = minimize(target, prices_init, method='Nelder-Mead', tol = tol_nm,options={'xatol':1e-10})
+    for i in range(3): # repeat up to 3 times
+        nm_result = minimize(target, prices_init, method='Nelder-Mead', tol = tol_nm,options={'maxiter':100, 'xatol':1e-10})
 
         if nm_result.fun < tol_nm: 
             break
